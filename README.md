@@ -21,6 +21,7 @@ The backend REST API for the order management app **Ordo.**
 ## Steps to run locally
 
 Node.js (14+) and MongoDB(4.2+) must be installed.
+Nodemon must be installed globally. If not, run `npm install -g nodemon` .
 
 - clone the repository from `main` branch
 - run `npm install` at the root of the project directory
