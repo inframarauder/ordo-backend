@@ -1,10 +1,24 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-	username: { type: String, required: true },
-	type: { type: String, enum: ["manager", "admin"], default: "manager" },
-	password: { type: String, required: true },
-});
+const userSchema = new mongoose.Schema(
+	{
+		username: {
+			type: String,
+			required: true,
+			unique: true,
+		},
+		type: {
+			type: String,
+			enum: ["manager", "admin"],
+			default: "manager",
+		},
+		password: {
+			type: String,
+			required: true,
+		},
+	},
+	{ timestamps: true }
+);
 
 userSchema.methods.createToken = function () {
 	try {
