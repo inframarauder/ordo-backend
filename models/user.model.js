@@ -25,7 +25,8 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.createToken = function () {
 	try {
 		const { JWT_PRIVATE_KEY } = process.env;
-		return jwt.sign({ _id: this._id, type: this.type }, JWT_PRIVATE_KEY);
+		const user = { _id: this._id, type: this.type };
+		return jwt.sign({ user }, JWT_PRIVATE_KEY);
 	} catch (error) {
 		console.error("Error in jwt generation\n", error);
 	}

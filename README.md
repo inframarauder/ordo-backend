@@ -20,7 +20,7 @@ The backend REST API for the order management app **Ordo.**
 
 ## Steps to run locally
 
-Node.js (14+) and MongoDB(4.2+) must be installed.
+Node.js (14+) and MongoDB(4.2+) must be installed.\
 Nodemon must be installed globally. If not, run `npm install -g nodemon` .
 
 - clone the repository from `main` branch
@@ -34,4 +34,5 @@ Nodemon must be installed globally. If not, run `npm install -g nodemon` .
 This is the list of environment variables required in the `.env` file for the app to work correctly.
 
 `JWT_PRIVATE_KEY`\
-`DB_URI`
+`DB_URI`\
+`MSG91_AUTHKEY`
