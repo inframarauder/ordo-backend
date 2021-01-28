@@ -3,6 +3,7 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const cors = require("cors");
 const Db = require("./configs/Db");
+const apiRoutes = require("./routes");
 
 //init express app
 const app = express();
@@ -16,6 +17,9 @@ Db.createConnection();
 app.get("/", (req, res) => {
 	return res.sendStatus(200);
 });
+
+//api routes:
+app.use("/api", apiRoutes);
 
 //start server
 const port = process.env.PORT || 5000;
