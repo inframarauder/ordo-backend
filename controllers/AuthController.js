@@ -1,12 +1,13 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
+const { NotFound, Unauthorized } = require("../configs/error");
 
-exports.loginUser = async (req, res) => {
+exports.loginUser = async (req, res, next) => {
 	try {
 		const { username, password, type } = req.body;
 		const user = await User.findOne({ username, type });
 		if (!user) {
-			return res.status(404).json({ error: "User not found!" });
+			throw new NotFound("User not found!");
 		} else {
 			let valid = await bcrypt.compare(password, user.password);
 			if (valid) {
@@ -19,11 +20,11 @@ exports.loginUser = async (req, res) => {
 					},
 				});
 			} else {
-				return res.status(401).json({ error: "Passwords do not match!" });
+				throw new Unauthorized("Passwords do not match!");
 			}
 		}
 	} catch (error) {
 		console.error("Error in login\n", error);
-		return res.sendStatus(500);
+		next(error);
 	}
 };

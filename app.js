@@ -4,6 +4,7 @@ const bodyparser = require("body-parser");
 const cors = require("cors");
 const Db = require("./configs/Db");
 const apiRoutes = require("./routes");
+const errorHandler = require("./middlewares/errorHandler");
 
 //init express app
 const app = express();
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 //api routes:
 app.use("/api", apiRoutes);
+app.use(errorHandler);
 
 //start server
 const port = process.env.PORT || 5000;
