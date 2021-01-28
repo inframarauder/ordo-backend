@@ -1,4 +1,4 @@
-const { GeneralError } = require("../configs/error");
+const { GeneralError } = require("../utils/error");
 
 module.exports = (err, req, res, next) => {
 	if (err instanceof GeneralError) {
@@ -7,6 +7,7 @@ module.exports = (err, req, res, next) => {
 			error: err.message,
 		});
 	} else {
+		console.error(`Error in ${req.method} ${req.originalUrl}\n`, err);
 		return res.status(500).json({
 			error: "Internal Server Error!",
 		});
