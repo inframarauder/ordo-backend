@@ -5,7 +5,7 @@ exports.isValidLoginRequest = (body) => {
 	const schema = Joi.object({
 		username: Joi.string().required(),
 		password: Joi.string().required(),
-		type: Joi.string().required().valid("manager", "admin"),
+		type: Joi.string().required().valid("manager", "admin", "waiter"),
 	});
 	const { error } = schema.validate(body);
 
