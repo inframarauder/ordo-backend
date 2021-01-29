@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const deleteS3Object = require("../utils/deleteS3Object");
 
 const menuItemSchema = new mongoose.Schema(
 	{

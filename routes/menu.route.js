@@ -1,7 +1,8 @@
 //api routes for menu items and categories
-
 const router = require("express").Router();
 const { isAuthenticated, isAdmin } = require("../middlewares/authChecker");
+const validateUpload = require("../middlewares/validateUpload");
+
 const {
 	createCategory,
 	listCategories,
@@ -19,8 +20,20 @@ router.get("/category/list", isAuthenticated, isAdmin, listCategories);
 //menu item routes
 router.get("/items/list", listMenuItems);
 router.get("/items/read/:itemId", readMenuItem);
-router.post("/items/create", isAuthenticated, isAdmin, createMenuItem);
-router.put("/items/update/:itemId", isAuthenticated, isAdmin, updateMenuItem);
+router.post(
+	"/items/create",
+	isAuthenticated,
+	isAdmin,
+	validateUpload,
+	createMenuItem
+);
+router.put(
+	"/items/update/:itemId",
+	isAuthenticated,
+	isAdmin,
+	validateUpload,
+	updateMenuItem
+);
 router.delete(
 	"/items/delete/:itemId",
 	isAuthenticated,

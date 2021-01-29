@@ -1,6 +1,7 @@
 const Category = require("../models/category.model");
 const MenuItem = require("../models/menuItem.model");
 const { BadRequest, NotFound } = require("../utils/error");
+const deleteS3Object = require("../utils/deleteS3Object");
 const {
 	isValidCategoryRequest,
 	isValidMenuItemRequest,
@@ -86,9 +87,17 @@ exports.readMenuItem = async (req, res, next) => {
 
 exports.updateMenuItem = async (req, res, next) => {
 	try {
-		const menuItem = await MenuItem.findByIdAndUpdate(
-			req.params.itemId,
-			req.body.update,
+		const update = { ...req.body };
+
+		if (req.files && req.files.length > 0) {
+			const item = await MenuItem.findById(req.params.itemId).lean();
+			await deleteS3Object(item.image);
+			update["image"] = req.files[0].location;
+		}
+
+		const menuItem = await MenuItem.findOneAndUpdate(
+			{ _id: req.params.itemId },
+			update,
 			{ new: true, runValidators: true }
 		).lean();
 
@@ -104,7 +113,9 @@ exports.updateMenuItem = async (req, res, next) => {
 
 exports.deleteMenuItem = async (req, res, next) => {
 	try {
-		await MenuItem.findByIdAndDelete(req.params.itemId);
+		const menuItem = await MenuItem.findById(req.params.itemId);
+		await deleteS3Object(menuItem.image);
+		await menuItem.delete();
 		return res.status(204).json({ status: "Menu item Deleted" });
 	} catch (error) {
 		next(error);
