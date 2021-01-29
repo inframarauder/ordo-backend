@@ -1,7 +1,10 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
-const { isValidLoginRequest } = require("../utils/validators/auth.validator");
-const { NotFound, Unauthorized } = require("../utils/error");
+const {
+	isValidLoginRequest,
+	isValidSignupRequest,
+} = require("../utils/validators/auth.validator");
+const { NotFound, Unauthorized, BadRequest } = require("../utils/error");
 
 exports.loginUser = async (req, res, next) => {
 	try {
@@ -25,6 +28,30 @@ exports.loginUser = async (req, res, next) => {
 				} else {
 					throw new Unauthorized("Passwords do not match!");
 				}
+			}
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.signupWaiter = async (req, res, next) => {
+	try {
+		let validRequest = isValidSignupRequest(req.body);
+		if (validRequest) {
+			let user = await User.findOne({ username: req.body.username });
+			if (user) {
+				throw new BadRequest("This username already exists.");
+			} else {
+				user = await new User({ ...req.body, type: "waiter" }).save();
+				const token = user.createToken();
+				return res.status(201).json({
+					token,
+					user: {
+						_id: user._id,
+						type: user.type,
+					},
+				});
 			}
 		}
 	} catch (error) {

@@ -1,4 +1,3 @@
-const { func } = require("joi");
 const jwt = require("jsonwebtoken");
 
 //middleware to protect routes
@@ -31,14 +30,19 @@ exports.isAuthenticated = (req, res, next) => {
 	}
 };
 
-//middleware to check admin only access
+//admin only access
 exports.isAdmin = (req, res, next) => {
 	allow(["admin"], req, res, next);
 };
 
-//middleware to check admin and manager access
+//admin,manager access
 exports.isManager = (req, res, next) => {
 	allow(["admin", "manager"], req, res, next);
+};
+
+//admin,manager,waiter access
+exports.isWaiter = (req, res, next) => {
+	allow(["admin", "manager", "waiter"], req, res, next);
 };
 
 function allow(levels, req, res, next) {

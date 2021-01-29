@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema(
 		},
 		type: {
 			type: String,
-			enum: ["manager", "admin"],
-			default: "manager",
+			enum: ["manager", "admin", "waiter"],
+			default: "waiter",
 		},
 		password: {
 			type: String,
@@ -35,7 +35,7 @@ userSchema.methods.createToken = function () {
 userSchema.pre("save", async function (next) {
 	try {
 		if (this.isNew) {
-			const salt = await bcrypt.genSalt(12);
+			const salt = await bcrypt.genSalt(10);
 			this.password = await bcrypt.hash(this.password, salt);
 		}
 
