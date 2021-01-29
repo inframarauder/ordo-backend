@@ -35,3 +35,4 @@ This is the list of environment variables required in the `.env` file for the ap
 
 `JWT_PRIVATE_KEY`\
 `DB_URI`\
+`DEFAULT_MENU_IMAGE`

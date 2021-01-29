@@ -15,3 +15,17 @@ exports.isValidLoginRequest = (body) => {
 		return true;
 	}
 };
+
+exports.isValidSignupRequest = (body) => {
+	const schema = Joi.object({
+		username: Joi.string().required(),
+		password: Joi.string().required().min(6),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};

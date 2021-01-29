@@ -11,8 +11,8 @@ const customerSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
-		email: {
-			type: String,
+		pin: {
+			type: Number,
 		},
 		name: {
 			type: String,
