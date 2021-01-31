@@ -1,13 +1,17 @@
 const mongoose = require("mongoose");
 
 const sessionSchema = new mongoose.Schema({
-	phone: {
+	email: {
 		type: String,
 		required: true,
 	},
-	isPhoneVerified: {
+	isEmailVerified: {
 		type: Boolean,
 		default: false,
+	},
+	table: {
+		type: Number,
+		required: true,
 	},
 	pin: {
 		type: Number,

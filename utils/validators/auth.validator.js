@@ -32,7 +32,8 @@ exports.isValidSignupRequest = (body) => {
 
 exports.isValidSessionRequest = (body) => {
 	const schema = Joi.object({
-		phone: Joi.string().required().length(10),
+		email: Joi.string().email().required(),
+		table: Joi.number().required(),
 	});
 	const { error } = schema.validate(body);
 
@@ -45,7 +46,7 @@ exports.isValidSessionRequest = (body) => {
 
 exports.isValidSessionValidationRequest = (body) => {
 	const schema = Joi.object({
-		otp: Joi.string().required().length(4),
+		code: Joi.string().required().length(4),
 	});
 	const { error } = schema.validate(body);
 
