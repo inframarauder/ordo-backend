@@ -3,6 +3,7 @@ const Session = require("../models/session.model");
 const { Unauthorized, Forbidden, NotFound } = require("../utils/error");
 const {
 	isValidOrderCreateRequest,
+	isValidAddItemRequest,
 } = require("../utils/validators/order.validator");
 
 exports.createOrder = async (req, res, next) => {
@@ -14,7 +15,7 @@ exports.createOrder = async (req, res, next) => {
 				throw new NotFound("Session not found!");
 			} else if (session.status != "active") {
 				throw new Forbidden("Session not validated or expired!");
-			} else if (session.pin === parseInt(req.body.pin)) {
+			} else if (session.pin !== req.body.pin) {
 				throw new Unauthorized("Invalid Pin - Cant place order!");
 			} else {
 				const order = await new Order({
@@ -31,3 +32,34 @@ exports.createOrder = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.addItemToOrder = async (req, res, next) => {
+	try {
+		const validRequest = isValidAddItemRequest(req.body);
+		if (validRequest) {
+			const { item, qty } = req.body;
+			const update = {
+				$push: {
+					orderedItems: { item, qty },
+				},
+			};
+
+			const order = await Order.findByIdAndUpdate(req.params.orderId, update, {
+				new: true,
+				runValidators: true,
+			}).lean();
+			if (order) {
+				return res.status(200).json({
+					orderId: order._id,
+					message: `Order for table ${order.table} successfully updated!`,
+				});
+			} else {
+				throw new NotFound("Order not found!");
+			}
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.removeItemFromOrder;
