@@ -4,6 +4,7 @@ const { Unauthorized, Forbidden, NotFound } = require("../utils/error");
 const {
 	isValidOrderCreateRequest,
 	isValidAddItemRequest,
+	isValidRemoveItemRequest,
 } = require("../utils/validators/order.validator");
 
 exports.createOrder = async (req, res, next) => {
@@ -61,5 +62,3 @@ exports.addItemToOrder = async (req, res, next) => {
 		next(error);
 	}
 };
-
-exports.removeItemFromOrder;

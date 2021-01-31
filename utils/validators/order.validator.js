@@ -46,17 +46,3 @@ exports.isValidAddItemRequest = (body) => {
 		return true;
 	}
 };
-
-exports.isValidRemoveItemRequest = (body) => {
-	const schema = Joi.object({
-		itemId: Joi.objectId().required(),
-		decreaseBy: Joi.number().default(1),
-	});
-	const { error } = schema.validate(body);
-
-	if (error) {
-		throw new BadRequest(error.details[0].message);
-	} else {
-		return true;
-	}
-};
