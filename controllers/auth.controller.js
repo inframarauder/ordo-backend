@@ -7,7 +7,6 @@ const {
 	isValidSessionRequest,
 	isValidSessionValidationRequest,
 } = require("../utils/validators/auth.validator");
-const { sendOTP, sendOrderingLink, verifyOTP } = require("../utils/sms");
 const { NotFound, Unauthorized, BadRequest } = require("../utils/error");
 
 exports.loginUser = async (req, res, next) => {
@@ -68,7 +67,9 @@ exports.createSession = async (req, res, next) => {
 		const validRequest = isValidSessionRequest(req.body);
 		if (validRequest) {
 			const session = await new Session(req.body).save();
-			sendOTP(session.phone);
+			/**
+			 * trigger sendOTP here
+			 */
 			return res.status(201).json({
 				sessionId: session._id,
 				message: `Session created.OTP sent to ${session.phone}`,
@@ -85,12 +86,16 @@ exports.validateSession = async (req, res, next) => {
 		if (validRequest) {
 			const session = await Session.findById(req.params.sessionId);
 			if (session) {
-				verifyOTP(session.phone, req.body.otp);
+				/**
+				 * Trigger verifyOTP here
+				 */
 				session.isPhoneVerified = true;
 				session.pin = Math.floor(1000 + Math.random() * 9000);
 				session.status = "active";
 				await session.save();
-				sendOrderingLink(session._id, session.phone);
+				/**
+				 * trigger sendOrderingLink here
+				 */
 				return res.status(200).json({
 					pin: session.pin,
 				});
