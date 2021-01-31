@@ -1,8 +1,11 @@
 const User = require("../models/user.model");
+const Session = require("../models/session.model");
 const bcrypt = require("bcryptjs");
 const {
 	isValidLoginRequest,
 	isValidSignupRequest,
+	isValidSessionRequest,
+	isValidSessionValidationRequest,
 } = require("../utils/validators/auth.validator");
 const { NotFound, Unauthorized, BadRequest } = require("../utils/error");
 
@@ -52,6 +55,52 @@ exports.signupWaiter = async (req, res, next) => {
 						type: user.type,
 					},
 				});
+			}
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.createSession = async (req, res, next) => {
+	try {
+		const validRequest = isValidSessionRequest(req.body);
+		if (validRequest) {
+			const session = await new Session(req.body).save();
+			/**
+			 * trigger sendOTP here
+			 */
+			return res.status(201).json({
+				sessionId: session._id,
+				message: `Session created.OTP sent to ${session.phone}`,
+			});
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.validateSession = async (req, res, next) => {
+	try {
+		const validRequest = isValidSessionValidationRequest(req.body);
+		if (validRequest) {
+			const session = await Session.findById(req.params.sessionId);
+			if (session) {
+				/**
+				 * Trigger verifyOTP here
+				 */
+				session.isPhoneVerified = true;
+				session.pin = Math.floor(1000 + Math.random() * 9000);
+				session.status = "active";
+				await session.save();
+				/**
+				 * trigger sendOrderingLink here
+				 */
+				return res.status(200).json({
+					pin: session.pin,
+				});
+			} else {
+				throw new NotFound("Session not found. Might not be created!");
 			}
 		}
 	} catch (error) {

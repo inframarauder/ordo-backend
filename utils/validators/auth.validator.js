@@ -29,3 +29,29 @@ exports.isValidSignupRequest = (body) => {
 		return true;
 	}
 };
+
+exports.isValidSessionRequest = (body) => {
+	const schema = Joi.object({
+		phone: Joi.string().required().length(10),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};
+
+exports.isValidSessionValidationRequest = (body) => {
+	const schema = Joi.object({
+		otp: Joi.string().required().length(4),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};

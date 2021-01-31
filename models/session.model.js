@@ -1,9 +1,16 @@
 const mongoose = require("mongoose");
 
 const sessionSchema = new mongoose.Schema({
-	customer: {
-		type: mongoose.Schema.Types.ObjectId,
+	phone: {
+		type: String,
 		required: true,
+	},
+	isPhoneVerified: {
+		type: Boolean,
+		default: false,
+	},
+	pin: {
+		type: Number,
 	},
 	orders: [
 		{
@@ -12,8 +19,8 @@ const sessionSchema = new mongoose.Schema({
 	],
 	status: {
 		type: String,
-		enum: ["active", "expired"],
-		default: "active",
+		enum: ["created", "active", "expired"],
+		default: "created",
 	},
 });
 
