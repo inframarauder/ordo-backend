@@ -33,6 +33,7 @@ exports.isValidSignupRequest = (body) => {
 exports.isValidSessionRequest = (body) => {
 	const schema = Joi.object({
 		email: Joi.string().email().required(),
+		table: Joi.number().required(),
 	});
 	const { error } = schema.validate(body);
 

@@ -9,6 +9,10 @@ const sessionSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
+	table: {
+		type: Number,
+		required: true,
+	},
 	pin: {
 		type: Number,
 	},
