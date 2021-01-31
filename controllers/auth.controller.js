@@ -72,7 +72,7 @@ exports.createSession = async (req, res, next) => {
 			 */
 			return res.status(201).json({
 				sessionId: session._id,
-				message: `Session created.OTP sent to ${session.phone}`,
+				message: `Session created.OTP sent to ${session.email}`,
 			});
 		}
 	} catch (error) {
@@ -89,7 +89,7 @@ exports.validateSession = async (req, res, next) => {
 				/**
 				 * Trigger verifyOTP here
 				 */
-				session.isPhoneVerified = true;
+				session.isEmailVerified = true;
 				session.pin = Math.floor(1000 + Math.random() * 9000);
 				session.status = "active";
 				await session.save();
@@ -98,9 +98,10 @@ exports.validateSession = async (req, res, next) => {
 				 */
 				return res.status(200).json({
 					pin: session.pin,
+					message: `Session is now active.`,
 				});
 			} else {
-				throw new NotFound("Session not found. Might not be created!");
+				throw new NotFound("Session not found. Might not have been created!");
 			}
 		}
 	} catch (error) {
