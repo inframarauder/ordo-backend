@@ -1,6 +1,5 @@
 const User = require("../models/user.model");
 const Session = require("../models/session.model");
-const bcrypt = require("bcryptjs");
 const {
 	isValidLoginRequest,
 	isValidSignupRequest,
@@ -8,6 +7,10 @@ const {
 	isValidSessionValidationRequest,
 } = require("../utils/validators/auth.validator");
 const { NotFound, Unauthorized, BadRequest } = require("../utils/error");
+const { sendOTP, sendMenuLink } = require("../utils/email");
+
+const bcrypt = require("bcryptjs");
+const axios = require("axios");
 
 exports.loginUser = async (req, res, next) => {
 	try {
@@ -67,13 +70,21 @@ exports.createSession = async (req, res, next) => {
 		const validRequest = isValidSessionRequest(req.body);
 		if (validRequest) {
 			const session = await new Session(req.body).save();
-			/**
-			 * trigger sendOTP here
-			 */
-			return res.status(201).json({
-				sessionId: session._id,
-				message: `Session created.OTP sent to ${session.email}`,
-			});
+			const otpResponse = await axios.post(
+				"http://localhost:5000/api/otp/create",
+				{
+					email: session.email,
+				}
+			);
+			if (otpResponse.status === 201) {
+				sendOTP(session.email, otpResponse.data.code);
+				return res.status(201).json({
+					sessionId: session._id,
+					message: `Session created.OTP sent to ${session.email}`,
+				});
+			} else {
+				throw new Error("Internal Server Error");
+			}
 		}
 	} catch (error) {
 		next(error);
@@ -86,20 +97,25 @@ exports.validateSession = async (req, res, next) => {
 		if (validRequest) {
 			const session = await Session.findById(req.params.sessionId);
 			if (session) {
-				/**
-				 * Trigger verifyOTP here
-				 */
-				session.isEmailVerified = true;
-				session.pin = Math.floor(1000 + Math.random() * 9000);
-				session.status = "active";
-				await session.save();
-				/**
-				 * trigger sendOrderingLink here
-				 */
-				return res.status(200).json({
-					pin: session.pin,
-					message: `Session is now active.`,
-				});
+				const otpResponse = await axios.post(
+					"http://localhost:5000/api/otp/verify",
+					{ email: session.email, code: req.body.code }
+				);
+				if (otpResponse.status === 200) {
+					session.isEmailVerified = true;
+					session.pin = Math.floor(1000 + Math.random() * 9000);
+					session.status = "active";
+					await session.save();
+					sendMenuLink(session);
+					return res.status(200).json({
+						pin: session.pin,
+						message: `Session is now active.`,
+					});
+				} else if (otpResponse.status === 400) {
+					return res.status(400).json({ error: otpResponse.error.data.error });
+				} else {
+					throw new Error("Internal Server Error!");
+				}
 			} else {
 				throw new NotFound("Session not found. Might not have been created!");
 			}

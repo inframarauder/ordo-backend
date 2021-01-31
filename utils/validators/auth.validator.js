@@ -45,7 +45,7 @@ exports.isValidSessionRequest = (body) => {
 
 exports.isValidSessionValidationRequest = (body) => {
 	const schema = Joi.object({
-		otp: Joi.string().required().length(4),
+		code: Joi.string().required().length(4),
 	});
 	const { error } = schema.validate(body);
 
