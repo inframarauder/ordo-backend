@@ -4,20 +4,66 @@ const { BadRequest } = require("../error");
 
 exports.isValidOrderCreateRequest = (body) => {
 	const schema = Joi.object({
-		sessionId: Joi.required().objectId(),
+		sessionId: Joi.objectId().required(),
 		pin: Joi.number().required().min(1000).max(9999),
-		items: Joi.array()
+		orderedItems: Joi.array()
 			.required()
 			.items(
 				Joi.object({
 					item: Joi.object({
-						_id: Joi.required().objectId(),
+						_id: Joi.objectId().required(),
 						itemName: Joi.string().required(),
 						price: Joi.number().required(),
 					}),
 					qty: Joi.number().required(),
 				})
 			),
+	});
+
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};
+
+exports.isValidAddItemRequest = (body) => {
+	const schema = Joi.object({
+		item: Joi.object({
+			_id: Joi.objectId().required(),
+			itemName: Joi.string().required(),
+			price: Joi.number().required(),
+		}).required(),
+		qty: Joi.number().required(),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};
+
+exports.isValidReduceRequest = (body) => {
+	const schema = Joi.object({
+		orderedItemId: Joi.objectId().required(),
+		qty: Joi.number().required(),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};
+
+exports.isValidRemoveRequest = (body) => {
+	const schema = Joi.object({
+		orderedItemId: Joi.objectId().required(),
 	});
 
 	const { error } = schema.validate(body);

@@ -65,6 +65,11 @@ exports.listMenuItems = async (req, res, next) => {
 					items: { $push: "$$ROOT" },
 				},
 			},
+			{
+				_id: 0,
+				category: "$_id",
+				items: 1,
+			},
 		]);
 		return res.status(200).json(menuItems);
 	} catch (error) {
