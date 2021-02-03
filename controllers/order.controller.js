@@ -4,7 +4,7 @@ const { Unauthorized, Forbidden, NotFound } = require("../utils/error");
 const {
 	isValidOrderCreateRequest,
 	isValidAddItemRequest,
-	isValidRemoveItemRequest,
+	isValidReduceRequest,
 } = require("../utils/validators/order.validator");
 
 exports.createOrder = async (req, res, next) => {
@@ -49,6 +49,29 @@ exports.addItemToOrder = async (req, res, next) => {
 				new: true,
 				runValidators: true,
 			}).lean();
+			if (order) {
+				return res.status(200).json({
+					orderId: order._id,
+					message: `Order for table ${order.table} successfully updated!`,
+				});
+			} else {
+				throw new NotFound("Order not found!");
+			}
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.changeQty = async (req, res, next) => {
+	try {
+		const validRequest = isValidReduceRequest(req.body);
+		if (validRequest) {
+			const order = await Order.findOneAndUpdate(
+				{ _id: req.params.orderId, "orderedItems._id": req.body.orderedItemId },
+				{ $set: { "orderedItems.$.qty": req.body.qty } },
+				{ new: true, runValidators: true }
+			);
 			if (order) {
 				return res.status(200).json({
 					orderId: order._id,

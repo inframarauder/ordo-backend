@@ -46,3 +46,17 @@ exports.isValidAddItemRequest = (body) => {
 		return true;
 	}
 };
+
+exports.isValidReduceRequest = (body) => {
+	const schema = Joi.object({
+		orderedItemId: Joi.objectId().required(),
+		qty: Joi.number().required(),
+	});
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};

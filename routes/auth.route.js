@@ -1,3 +1,5 @@
+//routes for authentication:
+
 const router = require("express").Router();
 const {
 	loginUser,
@@ -10,8 +12,6 @@ const {
 	isAdmin,
 	isWaiter,
 } = require("../middlewares/authChecker");
-
-//routes for authentication:
 
 router.post("/login", loginUser);
 router.post("/signup_waiter", isAuthenticated, isAdmin, signupWaiter);
