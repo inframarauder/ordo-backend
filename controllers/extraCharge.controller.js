@@ -25,7 +25,7 @@ exports.createExtraCharge = async (req, res, next) => {
 exports.listExtraCharges = async (req, res, next) => {
 	try {
 		const charges = await ExtraCharge.find().sort({ _id: -1 }).lean();
-		return res.status(200).jsoN(charges);
+		return res.status(200).json(charges);
 	} catch (error) {
 		next(error);
 	}

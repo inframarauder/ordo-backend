@@ -23,6 +23,7 @@ exports.createOrder = async (req, res, next) => {
 				const order = await new Order({
 					...req.body,
 					table: session.table,
+					session: session._id,
 				}).save();
 				return res.status(201).json({
 					orderId: order._id,

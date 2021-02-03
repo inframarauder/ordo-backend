@@ -3,13 +3,14 @@ const mongoose = require("mongoose");
 const billSchema = new mongoose.Schema(
 	{
 		order: {
-			type: Object,
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Order",
 		},
 		subTotal: {
 			type: Number,
 			default: 0,
 		},
-		extraCharges: [
+		billExtraCharges: [
 			{
 				type: Object,
 			},

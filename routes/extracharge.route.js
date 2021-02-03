@@ -11,7 +11,7 @@ const {
 //extra charge apis
 
 router.post("/create", isAuthenticated, isAdmin, createExtraCharge);
-router.get("/list", isAuthenticated, isAdmin, listExtraCharges);
+router.get("/list", listExtraCharges);
 router.get("/read/:chargeId", isAuthenticated, isAdmin, readExtraCharge);
 router.put("/update/:chargeId", isAuthenticated, isAdmin, updateExtraCharge);
 router.delete("/delete/:chargeId", isAuthenticated, isAdmin, deleteExtraCharge);
