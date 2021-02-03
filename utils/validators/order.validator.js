@@ -60,3 +60,17 @@ exports.isValidReduceRequest = (body) => {
 		return true;
 	}
 };
+
+exports.isValidRemoveRequest = (body) => {
+	const schema = Joi.object({
+		orderedItemId: Joi.objectId().required(),
+	});
+
+	const { error } = schema.validate(body);
+
+	if (error) {
+		throw new BadRequest(error.details[0].message);
+	} else {
+		return true;
+	}
+};

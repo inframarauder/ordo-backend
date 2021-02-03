@@ -5,6 +5,7 @@ const {
 	isValidOrderCreateRequest,
 	isValidAddItemRequest,
 	isValidReduceRequest,
+	isValidRemoveRequest,
 } = require("../utils/validators/order.validator");
 
 exports.createOrder = async (req, res, next) => {
@@ -79,6 +80,29 @@ exports.changeQty = async (req, res, next) => {
 				});
 			} else {
 				throw new NotFound("Order not found!");
+			}
+		}
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.removeItem = async (req, res, next) => {
+	try {
+		const validRequest = isValidRemoveRequest(req.body);
+		if (validRequest) {
+			const order = await Order.findByIdAndUpdate(
+				req.params.orderId,
+				{ $pull: { orderedItems: { _id: req.body.orderedItemId } } },
+				{ new: true, runValidators: true }
+			);
+			if (order) {
+				return res.status(200).json({
+					orderId: order._id,
+					message: `Order for table ${order.table} successfully updated!`,
+				});
+			} else {
+				throw new NotFound("Order not found");
 			}
 		}
 	} catch (error) {
