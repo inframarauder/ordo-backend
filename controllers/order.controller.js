@@ -133,3 +133,12 @@ exports.listOrdersByTable = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.deleteOrder = async (req, res, next) => {
+	try {
+		await Order.findByIdAndDelete(req.params.orderId);
+		return res.sendStatus(204);
+	} catch (error) {
+		next(error);
+	}
+};
