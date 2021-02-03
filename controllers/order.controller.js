@@ -109,3 +109,27 @@ exports.removeItem = async (req, res, next) => {
 		next(error);
 	}
 };
+
+exports.listOrdersByTable = async (req, res, next) => {
+	try {
+		const orders = await Order.aggregate([
+			{
+				$group: {
+					_id: "$table",
+					orders: { $push: "$$ROOT" },
+				},
+			},
+			{
+				$project: {
+					table: "$_id",
+					orders: 1,
+					_id: 0,
+				},
+			},
+		]);
+
+		return res.status(200).json(orders);
+	} catch (error) {
+		next(error);
+	}
+};
