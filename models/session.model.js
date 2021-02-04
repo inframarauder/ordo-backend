@@ -16,11 +16,10 @@ const sessionSchema = new mongoose.Schema({
 	pin: {
 		type: Number,
 	},
-	orders: [
-		{
-			type: Object,
-		},
-	],
+	order: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Order",
+	},
 	status: {
 		type: String,
 		enum: ["created", "active", "expired"],

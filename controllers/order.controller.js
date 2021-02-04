@@ -1,6 +1,11 @@
 const Order = require("../models/order.model");
 const Session = require("../models/session.model");
-const { Unauthorized, Forbidden, NotFound } = require("../utils/error");
+const {
+	Unauthorized,
+	Forbidden,
+	NotFound,
+	BadRequest,
+} = require("../utils/error");
 const {
 	isValidOrderCreateRequest,
 	isValidAddItemRequest,
@@ -19,12 +24,16 @@ exports.createOrder = async (req, res, next) => {
 				throw new Forbidden("Session not validated or expired!");
 			} else if (session.pin !== req.body.pin) {
 				throw new Unauthorized("Invalid Pin - Cant place order!");
+			} else if (session.status === "active" && session.order) {
+				throw new BadRequest("Session already has an order!");
 			} else {
 				const order = await new Order({
 					...req.body,
 					table: session.table,
 					session: session._id,
 				}).save();
+				session.order = order._id;
+				await session.save();
 				return res.status(201).json({
 					orderId: order._id,
 					message: `Order successully placed for table ${order.table}`,
@@ -111,24 +120,9 @@ exports.removeItem = async (req, res, next) => {
 	}
 };
 
-exports.listOrdersByTable = async (req, res, next) => {
+exports.listActiveOrders = async (req, res, next) => {
 	try {
-		const orders = await Order.aggregate([
-			{
-				$group: {
-					_id: "$table",
-					orders: { $push: "$$ROOT" },
-				},
-			},
-			{
-				$project: {
-					table: "$_id",
-					orders: 1,
-					_id: 0,
-				},
-			},
-		]);
-
+		const orders = await Order.find({ billGenerated: false });
 		return res.status(200).json(orders);
 	} catch (error) {
 		next(error);

@@ -50,7 +50,7 @@ exports.isValidAddItemRequest = (body) => {
 exports.isValidReduceRequest = (body) => {
 	const schema = Joi.object({
 		orderedItemId: Joi.objectId().required(),
-		qty: Joi.number().required(),
+		qty: Joi.number().required().min(1),
 	});
 	const { error } = schema.validate(body);
 

@@ -4,7 +4,7 @@ const {
 	addItemToOrder,
 	changeQty,
 	removeItem,
-	listOrdersByTable,
+	listActiveOrders,
 	deleteOrder,
 } = require("../controllers/order.controller");
 
@@ -14,7 +14,7 @@ router.post("/create", createOrder);
 router.put("/add_item/:orderId", addItemToOrder);
 router.put("/change_qty/:orderId", isAuthenticated, isManager, changeQty);
 router.put("/remove_item/:orderId", isAuthenticated, isManager, removeItem);
-router.get("/list_by_table", isAuthenticated, isManager, listOrdersByTable);
+router.get("/list_active", isAuthenticated, isManager, listActiveOrders);
 router.delete("/delete/:orderId", isAuthenticated, isManager, deleteOrder);
 
 module.exports = router;

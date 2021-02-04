@@ -46,7 +46,7 @@ exports.generateBill = async (req, res, next) => {
 			order: order._id,
 			subTotal,
 			billExtraCharges,
-			grandTotal,
+			grandTotal: Math.round((grandTotal + Number.EPSILON) * 100) / 100,
 		}).save();
 
 		//update order bill status :
@@ -57,7 +57,7 @@ exports.generateBill = async (req, res, next) => {
 		//add order to session and expire session:
 		await Session.findByIdAndUpdate(
 			order.session,
-			{ status: "expired", $push: { orders: order } },
+			{ status: "expired" },
 			{ new: true, runValidators: true }
 		);
 
